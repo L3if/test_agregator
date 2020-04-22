@@ -19,10 +19,20 @@ else:
 
 repo = Repository(sys.argv[1])
 
-for commit in repo.walk(repo.head.target, GIT_SORT_TOPOLOGICAL):
-    #print(commit.message)
-    diffs = repo.diff('HEAD', 'HEAD~1')
-    patches = [p for p in diffs]
-    for p in patches:
-        print(p.text)
-                                                                                                                                                                                                                                                                                
+print(list(repo.branches))
+
+#branch = repo.lookup_branch('develop')
+#ref = repo.lookup_reference(branch.name)
+
+branch = repo.lookup_branch('develop')
+ref = repo.lookup_reference(branch.name)
+repo.checkout(ref)
+pass
+for commit in repo.walk(repo.head.target):
+    print(commit.id)
+    #diffs = repo.diff('HEAD', commit.id)
+    #patches = [p for p in diffs]
+    #for p in patches:
+    #    print
+    #    print(p.text)
+    #    pass                                                                                                                                                                                                                                                                         
