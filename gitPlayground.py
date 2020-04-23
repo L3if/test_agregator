@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # import pygit2
-from pygit2 import Repository, Remote
+from pygit2 import Repository, Remote, Oid
 from pygit2 import GIT_SORT_TOPOLOGICAL, GIT_SORT_REVERSE
 import os.path
 from os import path
@@ -24,27 +24,42 @@ repo = Repository(sys.argv[1])
 # branch = repo.lookup_branch('develop')
 # ref = repo.lookup_reference(branch.name)
 
-branch = repo.lookup_branch('develop')
+'''branch = repo.lookup_branch('develop')
 ref = repo.lookup_reference(branch.name)
 repo.checkout(ref)
-pass
-
-
-#def function get_commit_list(first_commit_id, last_commit_id):
+commit_list = []
 for commit in repo.walk(repo.head.target, GIT_SORT_REVERSE):
+        commit_list.append(commit.id)
+print(commit_list)'''
+
+
+def get_commit_list(first_commit_id, last_commit_id):
+    commit_list = []
+    for commit in repo.walk(last_commit_id, GIT_SORT_REVERSE):
+        commit_list.append(commit.id)
+    first_commit_id_Oid = Oid(hex=first_commit_id)
+    modified_commit_list = commit_list[commit_list.index(first_commit_id_Oid):]
+    return modified_commit_list
+
+
+commit_list = get_commit_list('93ab25a44bb2112a659b85eda059b004f8ca43cd', 
+                            '250c11c6fff841220d93db5379659342a038436d')
+commit = repo.get(commit_list[1])
+
+print(commit.parents[0].id)
+
+print(repo.diff(commit.parents[0], commit)[0].text)
+
+
+
+
+
+
+'''for commit in repo.walk(repo.head.target, GIT_SORT_REVERSE):
     print(commit.id)
     if commit.parents:
         diffs = repo.diff(commit.parents[0], commit)
-        print (len(diffs))
+        print(len(diffs))
         for p in diffs:
             print(p.text)
-        
-        
-        
-        pass
-    '''diffs = repo.diff('HEAD', commit.id)
-    patches = [p for p in diffs]
-    for p in patches:
-        print
-        print(p.text)
-        pass'''                                                                        
+        pass     '''                                                            
