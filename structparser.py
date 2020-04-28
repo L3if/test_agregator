@@ -2,7 +2,9 @@ import sys
 import clang.cindex
 import typing
 from os import path
-clang.cindex.Config.set_library_path('/Library/Developer/CommandLineTools/usr/lib')
+clang.cindex.Config.set_library_path(
+    '/Library/Developer/CommandLineTools/usr/lib'
+    )
 
 
 def get_cpp_funcs(file_path):
@@ -22,7 +24,9 @@ def get_cpp_funcs(file_path):
                     result.append(i)
 
             return result
-        all_func = filter_node_list_by_node_kind(translation_unit.cursor.get_children(), [clang.cindex.CursorKind.FUNCTION_DECL])
+        all_func = filter_node_list_by_node_kind(
+            translation_unit.cursor.get_children(),
+            [clang.cindex.CursorKind.FUNCTION_DECL])
         for i in all_func:
             if not i.spelling.startswith('operator'):
                 func_list.append(i.spelling)

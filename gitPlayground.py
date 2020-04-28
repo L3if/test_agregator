@@ -9,37 +9,43 @@ import pprint
 import argparse
 
 # get arg
-# verify path existence
-#print avaliable branches
 
-if len(sys.argv) == 1:
-    print('path should be specified')
-    exit()
+# args parsed here, current args are: --path <path to repo> --branch
+parser = argparse.ArgumentParser(description="Tool to get and parse changed structures and instrunctuions in any .cpp repository")
 
-if path.exists(sys.argv[1]) and str(sys.argv[1]).endswith('.git'):
-    proj_path = sys.argv[1][:-4]
-    pass
+parser.add_argument("-p", "--path", help="path to a repository",
+                    type=str)
+parser.add_argument("-b", "--branch", help="branch name to mine changes",
+                    type=str)
+parser.add_argument("-s", "--start", help="full commit id to start from",
+                    type=str)
+parser.add_argument("-f", "--finish", help="full commit id to end with, HEAD used if not specified",
+                    type=str)
+
+args = parser.parse_args()
+if args.path:
+    # verify path existence
+    if path.exists(args.path) and args.path.endswith('.git'):
+        proj_path = args.path[:-4]
+        repo = Repository(args.path)
+        if args.branch and args.branch in list(repo.branches.local):
+            branch = repo.lookup_branch(list(repo.branches.local)[1])
+            ref = repo.lookup_reference(branch.name)
+            repo.checkout(ref)
+            print('Current Branch:')
+            print(repo.head.shorthand)
+            if args.start:
+                commit_id_list = get_commit_id_list()
+
+        else:
+            #print avaliable branches
+            print('Specify one of local avaliable local branches:')
+            print(*list(repo.branches.local), sep="\n")
+        
 else:
     print('path ether not exis or it\'s not a repo')
     exit()
 
-repo = Repository(sys.argv[1])
-print('Current Branch:')
-print(repo.head.shorthand)
-print('Avaliable branches:')
-print(*list(repo.branches.local), sep="\n")
-
-branch = repo.lookup_branch(list(repo.branches.local)[1])
-ref = repo.lookup_reference(branch.name)
-repo.checkout(ref)
-
-'''branch = repo.lookup_branch('develop')
-ref = repo.lookup_reference(branch.name)
-repo.checkout(ref)
-commit_list = []
-for commit in repo.walk(repo.head.target, GIT_SORT_REVERSE):
-        commit_list.append(commit.id)
-print(commit_list)'''
 
 print(structparser.get_cpp_funcs('/Users/tester/aggr/fuzzingpintool/Tracker.cpp'))
 
