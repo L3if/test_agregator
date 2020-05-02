@@ -87,8 +87,9 @@ def git_perform_analysis(start, finish, path):
                     if file_name not in hunks:
                         continue
                     for diff in hunks[file_name]:
-                        if func in diff.header:
-                            test_scope = add_to_test_scope(test_scope, file_path, func)
+                        for line in diff.lines:
+                            if func in line.content:
+                                test_scope = add_to_test_scope(test_scope, file_path, func)
                 else:
                     test_scope = add_to_test_scope(test_scope, file_path, func)
     return test_scope
@@ -132,4 +133,3 @@ if __name__ == "__main__":
     else:
         print('path ether not exis or it\'s not a repo')
         exit()
-
