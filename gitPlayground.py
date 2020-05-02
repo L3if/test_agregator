@@ -36,6 +36,30 @@ def get_hunks_in_commits(start_commit, last_commit):
 # args parsed here, current args are: --path <path to repo> --branch
 
 
+def git_perform_analysis(start, finish, path):
+    import os
+    # get list of files in start commit
+    utils.git_checkout(path, start)
+    start_files_funcs = {}
+    # r=root, d=directories, f = files
+    for r, d, f in os.walk(path):
+        for file in f:
+            if '.cpp' in file or '.h' in file:
+                start_files_funcs.update({os.path.join(r, file): structparser.get_cpp_funcs(os.path.join(r, file))})
+    pprint.pprint(start_files_funcs)
+    # get list of files in start commit
+    utils.git_checkout(path, finish)
+    finish_files_funcs = {}
+    # r=root, d=directories, f = files
+    for r, d, f in os.walk(path):
+        for file in f:
+            if '.cpp' in file or '.h' in file:
+                finish_files_funcs.update({os.path.join(r, file): structparser.get_cpp_funcs(os.path.join(r, file))})
+    
+    pprint.pprint(finish_files_funcs)
+    return 
+
+
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Tool to get and parse changed structures and instrunctuions in any .cpp repository")
@@ -48,7 +72,7 @@ if __name__ == "__main__":
                         action='store_true')
     parser.add_argument("-s", "--start", help="full commit id to start from",
                         type=str)
-    parser.add_argument("-f", "--finish", help="full commit id to end with, HEAD used if not specified",
+    parser.add_argument("-f", "--finish", help="full commit id to end with",
                         type=str)
 
     args = parser.parse_args()
@@ -66,7 +90,7 @@ if __name__ == "__main__":
                 if args.list:
                     pprint.pprint(get_commit_id_list(args.finish, args.start))
                 if args.start and args.finish:
-                    pprint.pprint(get_hunks_in_commits(args.start, args.finish))
+                    git_perform_analysis(args.start, args.finish, proj_path)
             else:
                 # pyprint avaliable branches
                 print('Specify one of local avaliable local branches:')
@@ -74,6 +98,8 @@ if __name__ == "__main__":
     else:
         print('path ether not exis or it\'s not a repo')
         exit()
+
+
 
 
     # print(structparser.get_cpp_funcs('/Users/tester/aggr/fuzzingpintool/Tracker.cpp'))

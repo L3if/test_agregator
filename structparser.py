@@ -8,7 +8,7 @@ clang.cindex.Config.set_library_path(
 
 
 def get_cpp_funcs(file_path):
-    if path.exists(file_path) and file_path.endswith('.cpp'):
+    if path.exists(file_path) and file_path.endswith('.cpp') or path.exists(file_path) and file_path.endswith('.h'):
         func_list = []
         index = clang.cindex.Index.create()
         translation_unit = index.parse(file_path, args=['-std=c++11'])
@@ -32,6 +32,6 @@ def get_cpp_funcs(file_path):
                 func_list.append(i.spelling)
         return func_list
     else:
-        print('path ether not exis or it\'s not a repo')
+        print('path ether not exis or it\'s not a .cpp')
         return None
 
