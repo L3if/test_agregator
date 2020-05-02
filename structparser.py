@@ -34,3 +34,4 @@ def get_cpp_funcs(file_path):
     else:
         print('path ether not exis or it\'s not a repo')
         return None
+

@@ -7,6 +7,7 @@ import sys
 import structparser
 import pprint
 import argparse
+import utils
 
 
 def get_commit_id_list(last_commit_id=None, first_commit_id=None):
@@ -33,6 +34,7 @@ def get_hunks_in_commits(start_commit, last_commit):
 # get arg
 
 # args parsed here, current args are: --path <path to repo> --branch
+
 
 if __name__ == "__main__":
     
