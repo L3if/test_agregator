@@ -43,7 +43,7 @@ def add_to_test_scope(scope, path, func):
         else:
             scope[path].add(func)
     else:
-        scope.update({path: set(func)})
+        scope.update({path: set((func,))})
     return scope
 
 
@@ -83,7 +83,10 @@ def git_perform_analysis(start, finish, path):
         else:
             for func in finish_files_funcs[file_path]:
                 if func in start_files_funcs[file_path]:
-                    for diff in hunks[file_path.split('/')[-1]]:
+                    file_name = file_path.split('/')[-1]
+                    if file_name not in hunks:
+                        continue
+                    for diff in hunks[file_name]:
                         if func in diff.header:
                             test_scope = add_to_test_scope(test_scope, file_path, func)
                 else:
